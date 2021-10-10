@@ -1,0 +1,9 @@
+torch>=1.7.1
+transformers>=4.5.0
+tensorflow
+tensorboard
+tqdm
+fugashi
+unidic
+datasets==1.2.1
+sentencepiece==0.1.91
