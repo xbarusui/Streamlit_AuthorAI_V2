@@ -1,1 +1,1 @@
-# AuthorAI_streamlit
+# streamlit_AuthorAI_V2
