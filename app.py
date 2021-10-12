@@ -30,7 +30,7 @@ def ai_lerning():
 
         st.write("ファインチューニングはいるのはいつ？")
         # ファインチューニングの実行
-        run_command(["python","gpt2japanese_study.py", 
+        run_command(["python3","gpt2japanese_study.py", 
                 "--model_name_or_path=rinna/japanese-gpt2-xsmall", 
                 "--train_file="+temp_file.name, 
                 "--validation_file="+temp_file.name, 
