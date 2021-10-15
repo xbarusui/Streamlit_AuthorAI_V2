@@ -10,33 +10,46 @@ import tempfile
 
 def ai_lerning():
 
+    # タイトル
+    st.title('AI テキスト学習')
+    # ヘッダ
+    st.header('epoch数を指定して学習させたい文章のテキストをアップロードしてください')
+
+    st.write('エポックというのは訓練データを学習する単位になります。初期値は 30 ですが、それ以上学習させると精度が上がります。が、10-30くらいにしないと遅いです')
+
+    epochnum = st.number_input(label='Epoch',value=30,)
+
     uploaded_file = st.file_uploader("upload file", type={"txt"})
     temp_dir = ""
     if uploaded_file is not None:
         #directory作成
         temp_dir = tempfile.mkdtemp()
-        print('temp dir path:', temp_dir)
 
         # Make temp file path from uploaded file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as temp_file:
             filepath = Path(temp_file.name)
             filepath.write_text(uploaded_file.getvalue().decode('utf-8').replace("\n",""))
-            st.write(temp_file.name) #write_bytes
-            st.write(filepath.read_text())
+#            st.write(temp_file.name) #write_bytes
+            with st.expander("アップロードしたテキストを確認したい場合はこちらを開いて下さい"):
+                st.write(filepath.read_text())
+
             st.success("Saved File:{} to tempDir".format(temp_file.name))
 
         st.session_state.session_dir = temp_dir
         st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
 
-        st.write("ファインチューニングはいるのはいつ？")
+        status_area = st.empty()
+        status_area.info("学習開始")
+
+#        st.write("ファインチューニングはいるのはいつ？")
         # ファインチューニングの実行
-        run_command(["python3","gpt2japanese_study.py", 
+        run_command(["python","gpt2japanese_study.py", 
                 "--model_name_or_path=rinna/japanese-gpt2-xsmall", 
                 "--train_file="+temp_file.name, 
                 "--validation_file="+temp_file.name, 
                 "--do_train",
                 "--do_eval",
-                "--num_train_epochs=10", 
+                "--num_train_epochs="+str(epochnum), 
                 "--save_steps=5000",
                 "--save_total_limit=3",
                 "--per_device_train_batch_size=1", 
@@ -45,12 +58,23 @@ def ai_lerning():
                 "--use_fast_tokenizer=False",
                 "--overwrite_output_dir"])
 
-        st.write("ファインチューニングおわり")
+        status_area.info("学習終了")
 
 
 def ai_generate():
-    """トップ！のアプリケーションを処理する関数"""
+
+    # タイトル
+    st.title('AI テキスト生成')
+    # ヘッダ
+    st.header('出力文字数と何回生成するかを指定して、テキスト先頭の文字数を入力する')
+
+    st.write('最初の文章が長い方が出力される文章は長くなる傾向にあります。')
     
+    novellength = st.number_input(label='生成する最大文字数',value=256,)
+
+    novelseq = st.number_input(label='生成回数',value=3,)
+
+
     noveltext = st.text_area(label='Multi-line message', height=275)
     # バリデーション処理
     if len(noveltext) < 1:
@@ -65,8 +89,8 @@ def ai_generate():
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
     model = AutoModelForCausalLM.from_pretrained(st.session_state.session_dir)
 
-    novellength=256
-    novelseq=3
+#    novellength=256
+#    novelseq=3
 
     # 生成された文章を表示します。
     st.write("冒頭の文章")
@@ -94,7 +118,7 @@ def main():
     apps = {
         '-': None,
         'AIテキスト学習': ai_lerning,
-        'AI自動生成': ai_generate,
+        'AIテキスト生成': ai_generate,
     }
     selected_app_name = st.sidebar.selectbox(label='apps',
                                              options=list(apps.keys()))
