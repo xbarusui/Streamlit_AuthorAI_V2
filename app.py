@@ -8,6 +8,8 @@ from pathlib import Path
 from transformers import T5Tokenizer, AutoModelForCausalLM
 import tempfile
 
+import gpt2japanese_study
+
 def ai_lerning():
 
     # タイトル
@@ -43,6 +45,19 @@ def ai_lerning():
 
 #        st.write("ファインチューニングはいるのはいつ？")
         # ファインチューニングの実行
+#        gpt2japanese_study.main(model_name_or_path="rinna/japanese-gpt2-xsmall",
+#                                train_file=temp_file.name,
+#                                validation_file=temp_file.name,
+#                                do_train=True,
+#                                do_eval=True,
+#                                num_train_epochs=str(epochnum),
+#                                save_steps=5000,
+#                                save_total_limit=3,
+#                                per_device_train_batch_size=1,
+#                                output_dir=st.session_state.session_dir,
+#                                use_fast_tokenizer=False,
+#                                overwrite_output_dir=True
+#                                )
         run_command(["python","gpt2japanese_study.py", 
                 "--model_name_or_path=rinna/japanese-gpt2-xsmall", 
                 "--train_file="+temp_file.name, 

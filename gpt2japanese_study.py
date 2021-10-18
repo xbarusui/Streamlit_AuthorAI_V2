@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 # coding=utf-8
 # Copyright 2020 The HuggingFace Inc. team. All rights reserved.
@@ -15,7 +16,6 @@
 # limitations under the License.
 """
 Fine-tuning the library models for causal language modeling (GPT, GPT-2, CTRL, ...) on a text file or a dataset.
-
 Here is the full list of checkpoints on the hub that can be fine-tuned by this script:
 https://huggingface.co/models?filter=causal-lm
 """
@@ -169,6 +169,7 @@ class DataTrainingArguments:
 
 
 def main():
+#def main(model_name_or_path,train_file,validation_file,do_train,do_eval,num_train_epochs,save_steps,save_total_limit,per_device_train_batch_size,output_dir,use_fast_tokenizer,overwrite_output_dir):
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
@@ -180,8 +181,6 @@ def main():
         model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-
-    # Detecting last checkpoint.
     last_checkpoint = None
     if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
