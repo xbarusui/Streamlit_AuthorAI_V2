@@ -58,7 +58,7 @@ def ai_lerning():
 #                                use_fast_tokenizer=False,
 #                                overwrite_output_dir=True
 #                                )
-        run_command(["python","gpt2japanese_study.py", 
+        run_command(["/home/appuser/venv/bin/python","gpt2japanese_study.py", 
                 "--model_name_or_path=rinna/japanese-gpt2-xsmall", 
                 "--train_file="+temp_file.name, 
                 "--validation_file="+temp_file.name, 
