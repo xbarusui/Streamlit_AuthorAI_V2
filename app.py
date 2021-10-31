@@ -18,9 +18,9 @@ def ai_lerning():
     # ヘッダ
     st.header('epoch数を指定して学習させたい文章のテキストをアップロードしてください')
 
-    st.write('エポックというのは訓練データを学習する単位になります。初期値は 30 ですが、それ以上学習させると精度が上がります。が、10-30くらいにしないと遅いです')
+    st.write('エポックというのは訓練データを学習する単位になります。初期値は 10 ですが、1-10程度に設定してください。学習が少ないですが30分越えるとリロードして利用できなくなります')
 
-    epochnum = st.number_input(label='Epoch',value=30,)
+    epochnum = st.number_input(label='Epoch',value=10,)
 
     uploaded_file = st.file_uploader("upload file", type={"txt"})
     temp_dir = ""
