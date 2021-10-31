@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
-import subprocess
-from subprocess import PIPE
 import tempfile
 from pathlib import Path
 from transformers import T5Tokenizer, AutoModelForCausalLM
-import tempfile
+from transformers import TextDataset,DataCollatorForLanguageModeling
+from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 
-import gpt2japanese_study
 
 def ai_lerning():
+
+    # トークナイザーとモデルの準備
+    tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
     # タイトル
     st.title('AI テキスト学習')
@@ -43,40 +44,47 @@ def ai_lerning():
         status_area = st.empty()
         status_area.info("学習開始")
 
-#        st.write("ファインチューニングはいるのはいつ？")
-        # ファインチューニングの実行
-#        gpt2japanese_study.main(model_name_or_path="rinna/japanese-gpt2-xsmall",
-#                                train_file=temp_file.name,
-#                                validation_file=temp_file.name,
-#                                do_train=True,
-#                                do_eval=True,
-#                                num_train_epochs=str(epochnum),
-#                                save_steps=5000,
-#                                save_total_limit=3,
-#                                per_device_train_batch_size=1,
-#                                output_dir=st.session_state.session_dir,
-#                                use_fast_tokenizer=False,
-#                                overwrite_output_dir=True
-#                                )
-        run_command(["/home/appuser/venv/bin/python","gpt2japanese_study.py", 
-                "--model_name_or_path=rinna/japanese-gpt2-xsmall", 
-                "--train_file="+temp_file.name, 
-                "--validation_file="+temp_file.name, 
-                "--do_train",
-                "--do_eval",
-                "--num_train_epochs="+str(epochnum), 
-                "--save_steps=5000",
-                "--save_total_limit=3",
-                "--per_device_train_batch_size=1", 
-                "--per_device_eval_batch_size=1",
-                "--output_dir="+st.session_state.session_dir,
-                "--use_fast_tokenizer=False",
-                "--overwrite_output_dir"])
+        # 
+        train_dataset,test_dataset,data_collator = load_dataset(temp_file.name,temp_file.name,tokenizer)
+
+        model = AutoModelForCausalLM.from_pretrained("rinna/japanese-gpt2-xsmall")
+
+        training_args = TrainingArguments(
+            do_train=True,
+            do_eval=True,
+            save_total_limit=3,
+            output_dir=st.session_state.session_dir, #The output directory
+            overwrite_output_dir=True, #overwrite the content of the output directory
+            num_train_epochs=epochnum, # number of training epochs
+            per_device_train_batch_size=32, # batch size for training
+            per_device_eval_batch_size=64,  # batch size for evaluation
+            per_gpu_train_batch_size=64,
+#            eval_steps = 400, # Number of update steps between two evaluations.
+            save_steps=5000, # after # steps model is saved 
+#            warmup_steps=500,# number of warmup steps for learning rate scheduler
+            prediction_loss_only=True
+            )
+
+
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            data_collator=data_collator,
+            train_dataset=train_dataset,
+            eval_dataset=test_dataset,
+        )
+
+        trainer.train()
+
+        trainer.save_model()
 
         status_area.info("学習終了")
 
 
 def ai_generate():
+
+    # トークナイザーとモデルの準備
+    tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
     # タイトル
     st.title('AI テキスト生成')
@@ -101,11 +109,8 @@ def ai_generate():
         st.session_state.session_dir = "rinna/japanese-gpt2-xsmall" #session_dirがsession_stateに追加されていない場合，元モデルで初期化（不要？）
 
     # トークナイザーとモデルの準備
-    tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
     model = AutoModelForCausalLM.from_pretrained(st.session_state.session_dir)
 
-#    novellength=256
-#    novelseq=3
 
     # 生成された文章を表示します。
     st.write("冒頭の文章")
@@ -129,6 +134,7 @@ def ai_generate():
 
 
 def main():
+
     # アプリケーション名と対応する関数のマッピング
     apps = {
         '-': None,
@@ -145,18 +151,23 @@ def main():
     # 選択されたアプリケーションを処理する関数を呼び出す
     render_func = apps[selected_app_name]
     render_func()
-  
 
-def run_command(args):
-    """Run command, transfer stdout/stderr back into Streamlit and manage error"""
-    st.info(f"Running '{' '.join(args)}'")
-    result = subprocess.run(args, capture_output=True, text=True)
-    try:
-        result.check_returncode()
-        st.info(result.stdout)
-    except subprocess.CalledProcessError as e:
-        st.error(result.stderr)
-        raise e
+
+def load_dataset(train_path,test_path,tokenizer):
+    train_dataset = TextDataset(
+          tokenizer=tokenizer,
+          file_path=train_path,
+          block_size=128)
+     
+    test_dataset = TextDataset(
+          tokenizer=tokenizer,
+          file_path=test_path,
+          block_size=128)   
+    
+    data_collator = DataCollatorForLanguageModeling(
+        tokenizer=tokenizer, mlm=False,
+    )
+    return train_dataset,test_dataset,data_collator
 
 
 if __name__ == '__main__':
