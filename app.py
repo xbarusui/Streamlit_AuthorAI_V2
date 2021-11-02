@@ -2,6 +2,7 @@
 
 import streamlit as st
 import tempfile
+import chardet
 from pathlib import Path
 from transformers import T5Tokenizer, AutoModelForCausalLM
 from transformers import TextDataset,DataCollatorForLanguageModeling
@@ -14,29 +15,38 @@ def ai_lerning():
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
     # タイトル
-    st.title('AI テキスト学習')
+    st.title("創作作家AI")
     # ヘッダ
-    st.header('epoch数を指定して学習させたい文章のテキストをアップロードしてください')
+    st.header("AI テキスト学習")
 
-    st.write('エポックというのは訓練データを学習する単位になります。初期値は 10 ですが、1-10程度に設定してください。学習が少ないですが30分越えるとリロードして利用できなくなります')
+    st.write("epoch数を指定して学習させたい文章のテキストをアップロードしてください")
 
-    epochnum = st.number_input(label='Epoch',value=10,)
+    st.write("エポックというのは訓練データを学習する単位になります。初期値は 10 ですが、1-10程度に設定してください。学習が少ないですが30分越えるとリロードして利用できなくなります")
+
+    epochnum = st.number_input(label='Epoch',value=10)
 
     uploaded_file = st.file_uploader("upload file", type={"txt"})
+
     temp_dir = ""
     if uploaded_file is not None:
         #directory作成
         temp_dir = tempfile.mkdtemp()
 
         # Make temp file path from uploaded file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as temp_file:
-            filepath = Path(temp_file.name)
-            filepath.write_text(uploaded_file.getvalue().decode('utf-8').replace("\n",""))
-#            st.write(temp_file.name) #write_bytes
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as f:
+
+            filepath = Path(f.name)
+
+#            st.write(chardet.detect(uploaded_file.getvalue()))
+
+            filepath.write_text(uploaded_file.getvalue().decode(chardet.detect(uploaded_file.getvalue())["encoding"]).replace("\n",""))
+            #filepath.write_text(uploaded_file.getvalue().decode('utf-8').replace("\n",""))
+            #st.write(temp_file.name) #write_bytes
+
             with st.expander("アップロードしたテキストを確認したい場合はこちらを開いて下さい"):
                 st.write(filepath.read_text())
 
-            st.success("Saved File:{} to tempDir".format(temp_file.name))
+            st.success("Saved File:{} to tempDir".format(f.name))
 
         st.session_state.session_dir = temp_dir
         st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
@@ -44,8 +54,9 @@ def ai_lerning():
         status_area = st.empty()
         status_area.info("学習開始")
 
+
         # 
-        train_dataset,test_dataset,data_collator = load_dataset(temp_file.name,temp_file.name,tokenizer)
+        train_dataset,test_dataset,data_collator = load_dataset(f.name,f.name,tokenizer)
 
         model = AutoModelForCausalLM.from_pretrained("rinna/japanese-gpt2-xsmall")
 
@@ -89,11 +100,13 @@ def ai_generate():
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
     # タイトル
-    st.title('AI テキスト生成')
+    st.title('創作作家AI')
     # ヘッダ
-    st.header('出力文字数と何回生成するかを指定して、テキスト先頭の文字数を入力する')
+    st.header("AI テキスト生成")
 
-    st.write('最初の文章が長い方が出力される文章は長くなる傾向にあります。')
+    st.write("出力文字数と何回生成するかを指定して、テキスト先頭の文字数を入力する")
+
+    st.write("最初の文章が長い方が出力される文章は長くなる傾向にあります。")
     
     novellength = st.number_input(label='生成する最大文字数',value=256,)
 
@@ -122,7 +135,7 @@ def ai_generate():
 
     # 推論
     input = tokenizer.encode( noveltext , return_tensors="pt")
-    output = model.generate(input, do_sample=True, max_length=novellength, num_return_sequences=novelseq,top_k=0,min_length=int(novellength/2))
+    output = model.generate(input, do_sample=True, max_length=novellength, num_return_sequences=novelseq,top_k=0,min_length=int(novellength/2),no_repeat_ngram_size=3)
     # 出力されたコードを文章に戻します。
     DecodedOutput = tokenizer.batch_decode(output)
 
@@ -130,8 +143,8 @@ def ai_generate():
       st.write("--- AI生成文章" + str(j+1) + "回目 ---")
       i = 0
       while i < len(DecodedOutput[j]):
-        st.write(DecodedOutput[j].replace('</s>','')[i:i+80]) 
-        i = i+80
+        st.write(DecodedOutput[j].replace('</s>','')[i:i+novellength]) 
+        i = i+novellength
       st.write("----------------------------------------")
 
 

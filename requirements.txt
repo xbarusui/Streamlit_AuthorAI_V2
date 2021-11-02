@@ -7,3 +7,4 @@ fugashi
 unidic
 datasets>=1.13.3
 sentencepiece>=0.1.91
+chardet
