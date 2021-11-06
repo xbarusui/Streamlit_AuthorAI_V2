@@ -29,6 +29,8 @@ def ai_generate():
         # 条件を満たないときは処理を停止する
         st.stop()
 
+    st.write("session_state.session_dir = " + str(st.session_state.session_dir))
+
     if 'session_dir' not in st.session_state: 
         st.session_state.session_dir = "rinna/japanese-gpt2-xsmall" #session_dirがsession_stateに追加されていない場合，元モデルで初期化（不要？）
 

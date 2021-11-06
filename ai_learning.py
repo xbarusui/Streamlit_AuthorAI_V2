@@ -50,12 +50,11 @@ def ai_learning():
 
         st.session_state.session_dir = temp_dir
         st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
-
+        st.write("f.name = " + str(f.name))
         status_area = st.empty()
         status_area.info("学習開始")
 
 
-        # 
         train_dataset,test_dataset,data_collator = load_dataset(f.name,f.name,tokenizer)
 
         model = AutoModelForCausalLM.from_pretrained("rinna/japanese-gpt2-xsmall")
