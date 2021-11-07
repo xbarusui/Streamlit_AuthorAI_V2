@@ -8,8 +8,6 @@ def ai_generate():
     # トークナイザーとモデルの準備
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
-    # タイトル
-    st.title('創作作家AI')
     # ヘッダ
     st.header("AI テキスト生成")
 

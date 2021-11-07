@@ -11,8 +11,6 @@ from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 
 def ai_learning_novelup():
 
-    # タイトル
-    st.title("創作作家AI")
     # ヘッダ
     st.header("AI テキスト学習（ノベプラから取得）")
 
@@ -54,6 +52,8 @@ def ai_learning_novelup():
 
         with st.expander("アップロードしたテキストを確認したい場合はこちらを開いて下さい"):
             st.write(filepath.read_text())
+
+            st.session_state.story = filepath.read_text()
 
         st.success("Saved File:{} to tempDir".format(f.name))
 

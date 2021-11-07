@@ -14,8 +14,6 @@ def ai_learning():
     # トークナイザーとモデルの準備
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
-    # タイトル
-    st.title("創作作家AI")
     # ヘッダ
     st.header("AI テキスト学習")
 
@@ -36,17 +34,13 @@ def ai_learning():
         with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as f:
 
             filepath = Path(f.name)
-
-#            st.write(chardet.detect(uploaded_file.getvalue()))
-
             filepath.write_text(uploaded_file.getvalue().decode(chardet.detect(uploaded_file.getvalue())["encoding"]).replace("\n",""))
-            #filepath.write_text(uploaded_file.getvalue().decode('utf-8').replace("\n",""))
-            #st.write(temp_file.name) #write_bytes
 
             with st.expander("アップロードしたテキストを確認したい場合はこちらを開いて下さい"):
                 st.write(filepath.read_text())
 
             st.success("Saved File:{} to tempDir".format(f.name))
+            st.session_state.story = filepath.read_text()
 
         st.session_state.session_dir = temp_dir
         st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
