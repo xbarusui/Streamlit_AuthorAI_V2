@@ -69,7 +69,9 @@ def create_wordcloud(text, image_path = None):
 
     stop_words = ['さん','そう','くん','ちゃん','たち']  
 #    fpath = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"  # 日本語フォント指定
-    fpath = "/usr/local/lib/python3.7/dist-packages/japanize_matplotlib/fonts/ipaexg.ttf"
+#    fpath = "/usr/local/lib/python3.7/dist-packages/japanize_matplotlib/fonts/ipaexg.ttf" #Google Colab用のpath
+    fpath = "/home/appuser/venv/lib/python3.7/site-packages/japanize_matplotlib/fonts/ipaexg.ttf" #Streamlit sharing用のpath
+
     st.write(fpath)
 
     if image_path == None:
