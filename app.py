@@ -4,8 +4,12 @@ import streamlit as st
 import ai_learning as learning
 import ai_learning_novelup as learning_n
 import ai_generate as generate
+import text_analyze as analyze
 
 def main():
+
+    # タイトル
+    st.title('創作作家AI')
 
     # アプリケーション名と対応する関数のマッピング
     apps = {
@@ -30,17 +34,20 @@ def main():
 
 
 def ai_learning():
-  learning.ai_learning()
+    learning.ai_learning()
 
 def ai_learning_novelup():
-  learning_n.ai_learning_novelup()
+    learning_n.ai_learning_novelup()
 
 def ai_generate():
-  generate.ai_generate()
+    generate.ai_generate()
 
 def text_wordcloud():
-    st.write("工事中")
+    if "story" not in st.session_state:
+        st.write("テキストがないよ")
+        st.stop()
 
+    analyze.create_wordcloud(st.session_state.story)
 
 def text_analyze():
     st.write("工事中")
