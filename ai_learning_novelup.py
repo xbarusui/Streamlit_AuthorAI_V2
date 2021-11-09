@@ -3,6 +3,7 @@
 import streamlit as st
 import pandas as pd
 import tempfile
+import shutil
 from pathlib import Path
 import novel_downloader
 from transformers import T5Tokenizer, AutoModelForCausalLM
@@ -96,7 +97,13 @@ def ai_learning_novelup():
 
     status_area.info("学習終了")
 
+    shutil.make_archive(str(st.session_state.session_dir) , "zip", root_dir=str(st.session_state.session_dir))
+                
+    with open(str(st.session_state.session_dir)+".zip", "rb") as my_file:
+        st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.session_dir)+".zip", mime = "application/octet-stream") 
 
+
+@st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)
 def load_dataset(train_path,test_path,tokenizer):
     train_dataset = TextDataset(
           tokenizer=tokenizer,

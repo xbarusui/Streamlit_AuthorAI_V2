@@ -5,6 +5,7 @@ import ai_learning as learning
 import ai_learning_novelup as learning_n
 import ai_generate as generate
 import text_analyze as analyze
+import model_upload as upload
 
 def main():
 
@@ -16,6 +17,7 @@ def main():
         "-": None,
         "AIテキスト学習": ai_learning,
         "AIテキスト学習(ノベプラ)": ai_learning_novelup,
+        "AIモデルアップロード": model_upload,
         "AIテキスト生成": ai_generate,
         "テキスト可視化": text_wordcloud,
         "テキスト分析テスト": text_analyze,
@@ -38,6 +40,9 @@ def ai_learning():
 
 def ai_learning_novelup():
     learning_n.ai_learning_novelup()
+
+def model_upload():
+    upload.model_upload()
 
 def ai_generate():
     generate.ai_generate()

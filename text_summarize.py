@@ -39,6 +39,7 @@ def text_sum_lex(text, ratio=0.2):
 	return lex_summary
 
 # Function to generate text summary using TextRank
+@st.cache(allow_output_mutation=True, max_entries=10, ttl=3600)
 def text_sum_text(text, ratio=0.2):
 
 	# Create parse object 

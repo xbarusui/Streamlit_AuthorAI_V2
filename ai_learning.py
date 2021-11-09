@@ -3,11 +3,12 @@
 import streamlit as st
 import tempfile
 import chardet
+import shutil
+
 from pathlib import Path
 from transformers import T5Tokenizer, AutoModelForCausalLM
 from transformers import TextDataset,DataCollatorForLanguageModeling
 from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
-
 
 def ai_learning():
 
@@ -60,14 +61,9 @@ def ai_learning():
             output_dir=st.session_state.session_dir, #The output directory
             overwrite_output_dir=True, #overwrite the content of the output directory
             num_train_epochs=epochnum, # number of training epochs
-#            per_device_train_batch_size=32, # batch size for training
-#            per_device_eval_batch_size=64,  # batch size for evaluation
-#            per_gpu_train_batch_size=64,
             per_device_train_batch_size=1, # batch size for training
             per_device_eval_batch_size=1,  # batch size for evaluation
-#            eval_steps = 400, # Number of update steps between two evaluations.
             save_steps=5000, # after # steps model is saved 
-#            warmup_steps=500,# number of warmup steps for learning rate scheduler
             prediction_loss_only=True
             )
 
@@ -86,7 +82,13 @@ def ai_learning():
 
         status_area.info("学習終了")
 
+        shutil.make_archive(str(st.session_state.session_dir) , "zip", root_dir=str(st.session_state.session_dir))
+                
+        with open(str(st.session_state.session_dir)+".zip", "rb") as my_file:
+            st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.session_dir)+".zip", mime = "application/octet-stream") 
 
+
+@st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)
 def load_dataset(train_path,test_path,tokenizer):
     train_dataset = TextDataset(
           tokenizer=tokenizer,
