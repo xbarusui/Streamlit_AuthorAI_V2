@@ -8,9 +8,9 @@ import text_analyze as analyze
 import model_upload as upload
 
 ##google colab
-st.session_state.content_dir = "/content/"
+#st.session_state.content_dir = "/content/"
 ##streamlit sharing
-#st.session_state.content_dir = "/home/appuser/"
+st.session_state.content_dir = "/home/appuser/"
 
 def main():
 
