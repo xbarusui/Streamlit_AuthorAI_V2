@@ -56,4 +56,4 @@ def ai_generate():
         i = i+novellength
       st.write("----------------------------------------")
 
-    del st.session_state[model_dir]
+    del st.session_state["model_dir"]
