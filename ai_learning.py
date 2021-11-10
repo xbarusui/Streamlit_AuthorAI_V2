@@ -12,6 +12,8 @@ from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 
 def ai_learning():
 
+    uploaded_file=""
+
     # トークナイザーとモデルの準備
     tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt2-xsmall")
 
@@ -27,9 +29,10 @@ def ai_learning():
     uploaded_file = st.file_uploader("upload file", type={"txt"})
 
     temp_dir = ""
-    if uploaded_file is not None:
+    #uploadファイルがあること、st.session_state.model_dirに中味がない事(DLボタンで動かないように)
+    if uploaded_file is not None and 'model_dir' not in st.session_state:
         #directory作成
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp("","",st.session_state.content_dir)
 
         # Make temp file path from uploaded file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as f:
@@ -43,8 +46,8 @@ def ai_learning():
             st.success("Saved File:{} to tempDir".format(f.name))
             st.session_state.story = filepath.read_text()
 
-        st.session_state.session_dir = temp_dir
-        st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
+        st.session_state.model_dir = temp_dir
+        st.write('session_state.model_dir = ' + str(st.session_state.model_dir))
         st.write("f.name = " + str(f.name))
         status_area = st.empty()
         status_area.info("学習開始")
@@ -58,7 +61,7 @@ def ai_learning():
             do_train=True,
             do_eval=True,
             save_total_limit=3,
-            output_dir=st.session_state.session_dir, #The output directory
+            output_dir=st.session_state.model_dir, #The output directory
             overwrite_output_dir=True, #overwrite the content of the output directory
             num_train_epochs=epochnum, # number of training epochs
             per_device_train_batch_size=1, # batch size for training
@@ -82,10 +85,10 @@ def ai_learning():
 
         status_area.info("学習終了")
 
-        shutil.make_archive(str(st.session_state.session_dir) , "zip", root_dir=str(st.session_state.session_dir))
+        shutil.make_archive(str(st.session_state.model_dir) , "zip", root_dir=str(st.session_state.model_dir))
                 
-        with open(str(st.session_state.session_dir)+".zip", "rb") as my_file:
-            st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.session_dir)+".zip", mime = "application/octet-stream") 
+        with open(str(st.session_state.model_dir)+".zip", "rb") as my_file:
+            st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.model_dir)+".zip", mime = "application/octet-stream") 
 
 
 @st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)

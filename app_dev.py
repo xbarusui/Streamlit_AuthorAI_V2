@@ -7,6 +7,11 @@ import ai_generate as generate
 import text_analyze as analyze
 import model_upload as upload
 
+##google colab
+st.session_state.content_dir = "/content/"
+##streamlit sharing
+#st.session_state.content_dir = "/home/appuser/"
+
 def main():
 
     # タイトル
@@ -27,7 +32,7 @@ def main():
                                              options=list(apps.keys()))
 
     if selected_app_name == "-":
-        st.info("Please select the app")
+        st.info("左のメニューから選んでください")
         st.stop()
 
     # 選択されたアプリケーションを処理する関数を呼び出す

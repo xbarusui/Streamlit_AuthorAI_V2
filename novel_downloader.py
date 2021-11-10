@@ -51,6 +51,7 @@ def get_main_text_nobera(bs_obj):
 
 
 #なろうはこちらを呼び出す
+@st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)
 def narou_download(url_list):
 
     """
@@ -89,6 +90,7 @@ def narou_download(url_list):
     return stories
 
 #ノベプラはこちらを呼び出す
+@st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)
 def nobera_download(url_list):
 
     """

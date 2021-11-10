@@ -27,13 +27,13 @@ def ai_generate():
         # 条件を満たないときは処理を停止する
         st.stop()
 
-    st.write("session_state.session_dir = " + str(st.session_state.session_dir))
+    if 'model_dir' not in st.session_state: 
+        st.session_state.model_dir = "rinna/japanese-gpt2-xsmall" #model_dirがsession_stateに追加されていない場合，元モデルで初期化（不要？）
 
-    if 'session_dir' not in st.session_state: 
-        st.session_state.session_dir = "rinna/japanese-gpt2-xsmall" #session_dirがsession_stateに追加されていない場合，元モデルで初期化（不要？）
+    st.write("session_state.model_dir = " + str(st.session_state.model_dir))
 
     # トークナイザーとモデルの準備
-    model = AutoModelForCausalLM.from_pretrained(st.session_state.session_dir)
+    model = AutoModelForCausalLM.from_pretrained(st.session_state.model_dir)
 
 
     # 生成された文章を表示します。

@@ -11,6 +11,7 @@ from transformers import T5Tokenizer, AutoModelForCausalLM
 from transformers import TextDataset,DataCollatorForLanguageModeling
 from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 
+
 def model_upload():
 
     # トークナイザーとモデルの準備
@@ -25,8 +26,7 @@ def model_upload():
 
     temp_dir = ""
     if uploaded_file is not None:
-        #directory作成
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp("","",st.session_state.content_dir)
 
         filepath = ""
         # Make temp file path from uploaded file
@@ -43,6 +43,6 @@ def model_upload():
         st.success("Saved File:{} to tempDir".format(f.name))
 #        st.session_state.story = filepath.read_text()
 
-        st.session_state.session_dir = temp_dir
-        st.write('session_state.session_dir = ' + str(st.session_state.session_dir))
+        st.session_state.model_dir = temp_dir
+        st.write('session_state.model_dir = ' + str(st.session_state.model_dir))
         st.write("f.name = " + str(f.name))

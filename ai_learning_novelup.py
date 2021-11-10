@@ -10,6 +10,7 @@ from transformers import T5Tokenizer, AutoModelForCausalLM
 from transformers import TextDataset,DataCollatorForLanguageModeling
 from transformers import Trainer, TrainingArguments,AutoModelWithLMHead
 
+
 def ai_learning_novelup():
 
     # ヘッダ
@@ -26,15 +27,17 @@ def ai_learning_novelup():
     name = st.text_input(label="URL",key="textbox")
     # バリデーション処理
     if len(name) < 1:
-        st.warning('Please input your name')
+        st.warning('URLを指定してください')
         # 条件を満たないときは処理を停止する
         st.stop()
 
     namelist = []
     load_data = []
     #directory作成
-    st.session_state.session_dir = tempfile.mkdtemp()
-    st.write("session_state.session_dir = " + str(st.session_state.session_dir))
+    #st.session_state.model_dir = tempfile.mkdtemp()
+    st.session_state.model_dir = tempfile.mkdtemp("","",st.session_state.content_dir)
+
+    st.write("session_state.model_dir = " + str(st.session_state.model_dir))
 
     #元々複数でリスト渡しだったので少し修正
     namelist =[name]
@@ -73,7 +76,7 @@ def ai_learning_novelup():
         do_train=True,
         do_eval=True,
         save_total_limit=3,
-        output_dir=st.session_state.session_dir, #The output directory
+        output_dir=st.session_state.model_dir, #The output directory
         overwrite_output_dir=True, #overwrite the content of the output directory
         num_train_epochs=epochnum, # number of training epochs
         per_device_train_batch_size=1, # batch size for training
@@ -97,10 +100,10 @@ def ai_learning_novelup():
 
     status_area.info("学習終了")
 
-    shutil.make_archive(str(st.session_state.session_dir) , "zip", root_dir=str(st.session_state.session_dir))
+    shutil.make_archive(str(st.session_state.model_dir) , "zip", root_dir=str(st.session_state.model_dir))
                 
-    with open(str(st.session_state.session_dir)+".zip", "rb") as my_file:
-        st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.session_dir)+".zip", mime = "application/octet-stream") 
+    with open(str(st.session_state.model_dir)+".zip", "rb") as my_file:
+        st.download_button(label = 'Download', data = my_file, file_name = str(st.session_state.model_dir)+".zip", mime = "application/octet-stream") 
 
 
 @st.cache(allow_output_mutation=True, max_entries=10, ttl=3600,suppress_st_warning=True)
