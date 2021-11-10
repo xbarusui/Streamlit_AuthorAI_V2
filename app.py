@@ -5,7 +5,12 @@ import ai_learning as learning
 import ai_learning_novelup as learning_n
 import ai_generate as generate
 import text_analyze as analyze
-import uploadfile as upload
+import model_upload as upload
+
+##google colab
+st.session_state.content_dir = "/content/"
+##streamlit sharing
+#st.session_state.content_dir = "/home/appuser/"
 
 def main():
 
@@ -17,7 +22,7 @@ def main():
         "-": None,
         "AIテキスト学習": ai_learning,
         "AIテキスト学習(ノベプラ)": ai_learning_novelup,
-        "AIモデルアップロード": ai_uploadfile,
+        "AIモデルアップロード": model_upload,
         "AIテキスト生成": ai_generate,
         "テキスト可視化": text_wordcloud,
         "テキスト分析テスト": text_analyze,
@@ -27,7 +32,7 @@ def main():
                                              options=list(apps.keys()))
 
     if selected_app_name == "-":
-        st.info("Please select the app")
+        st.info("左のメニューから選んでください")
         st.stop()
 
     # 選択されたアプリケーションを処理する関数を呼び出す
@@ -41,8 +46,8 @@ def ai_learning():
 def ai_learning_novelup():
     learning_n.ai_learning_novelup()
 
-def ai_uploadfile():
-    upload.upload_file()
+def model_upload():
+    upload.model_upload()
 
 def ai_generate():
     generate.ai_generate()
