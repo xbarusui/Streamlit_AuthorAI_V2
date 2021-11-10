@@ -55,3 +55,5 @@ def ai_generate():
         st.write(DecodedOutput[j].replace('</s>','')[i:i+novellength]) 
         i = i+novellength
       st.write("----------------------------------------")
+
+    del st.session_state[model_dir]
