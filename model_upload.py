@@ -30,19 +30,17 @@ def model_upload():
 
         filepath = ""
         # Make temp file path from uploaded file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as f:
+        #with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as f:
+        with tempfile.NamedTemporaryFile(suffix=".zip") as f:
 
             filepath = Path(f.name)
             f.write(uploaded_file.getvalue())
 
-        #zip ファイルの解凍とファイルの配置
-        with zipfile.ZipFile(filepath) as existing_zip:
-            existing_zip.extractall(Path(temp_dir))
+            #zip ファイルの解凍とファイルの配置
+            with zipfile.ZipFile(filepath) as existing_zip:
+                existing_zip.extractall(Path(temp_dir))
 
-
-        st.success("Saved File:{} to tempDir".format(f.name))
-#        st.session_state.story = filepath.read_text()
+            st.success("Saved File:{} to tempDir".format(temp_dir))
 
         st.session_state.model_dir = temp_dir
         st.write('session_state.model_dir = ' + str(st.session_state.model_dir))
-        st.write("f.name = " + str(f.name))

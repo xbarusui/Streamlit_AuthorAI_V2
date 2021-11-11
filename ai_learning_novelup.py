@@ -48,7 +48,7 @@ def ai_learning_novelup():
     load_data = ''.join(df["text"])
 
     # Make temp file path from uploaded file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as f:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".txt",dir=st.session_state.content_dir) as f:
 
         filepath = Path(f.name)
 #        filepath.write_text(uploaded_file.getvalue().decode(chardet.detect(uploaded_file.getvalue())["encoding"]).replace("\n",""))
