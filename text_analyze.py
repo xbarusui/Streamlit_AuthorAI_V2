@@ -74,39 +74,64 @@ def create_wordcloud(text, image_path = None):
 
     st.write(fpath)
 
-    if image_path == None:
-                
-        wordcloud = WordCloud(
-            font_path=fpath,
-            width=600, height=400,   # default width=400, height=200
-            background_color="white",   # default=”black”
-            stopwords=set(stop_words),
-            max_words=200,   # default=200
-            min_font_size=4,   #default=4
-            collocations = False   #default = True
-            ).generate(words_wakati)
 
-    else:
-        mask = np.array(Image.open(image_path))
-        wordcloud = WordCloud(
-            font_path=fpath,
-            width=600, height=400,   # default width=400, height=200
-            background_color="white",   # default=”black”
-            stopwords=set(stop_words),
-            mask=mask,
-            max_words=200,   # default=200
-            min_font_size=4,   #default=4
-            collocations = False   #default = True
-            ).generate(words_wakati)
+    option1 = st.selectbox('背景を選んでください',("white","black"))
 
-    
-    plt.figure(figsize=(15,12))
-    plt.imshow(wordcloud)
-    plt.axis("off")
-    plt.savefig("word_cloud.png")
-    plt.show()
+    option2 = st.selectbox('カラーマップを選んでください',( 
+    'tab10','inferno', 'magma', 'plasma', 'viridis',
+    'Blues', 'BuGn', 'BuPu', 'GnBu',
+    'Greens', 'Greys', 'OrRd', 'Oranges',
+    'PuBu', 'PuBuGn', 'PuRd', 'Purples',
+    'RdPu', 'Reds', 'YlGn', 'YlGnBu', 'YlOrBr', 'YlOrRd',
+    'binary', 'gist_yarg', 'gist_gray', 'gray',
+    'bone', 'pink', 'spring', 'summer',
+    'autumn', 'winter', 'cool', 'Wistia',
+    'hot', 'afmhot', 'gist_heat', 'copper',
+    'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu',
+    'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic',
+    'Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2',
+    'Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b', 'tab20c',
+    'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern', 'gnuplot',
+    'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'hsv', 'gist_rainbow', 'rainbow',
+    'jet', 'nipy_spectral', 'gist_ncar'))
 
-    st.set_option('deprecation.showPyplotGlobalUse', False)
-    st.pyplot()
+
+    if st.button("WordCloud生成"):
+
+        if image_path == None:
+                    
+            wordcloud = WordCloud(
+                font_path=fpath,
+                width=600, height=400,   # default width=400, height=200
+                background_color=option1,   # default="white"
+                colormap=option2,   # default="set1?"
+                stopwords=set(stop_words),
+                max_words=200,   # default=200
+                min_font_size=4,   #default=4
+                collocations = False   #default = True
+                ).generate(words_wakati)
+
+        else:
+            mask = np.array(Image.open(image_path))
+            wordcloud = WordCloud(
+                font_path=fpath,
+                width=600, height=400,   # default width=400, height=200
+                background_color="white",   # default="black"
+                stopwords=set(stop_words),
+                mask=mask,
+                max_words=200,   # default=200
+                min_font_size=4,   #default=4
+                collocations = False   #default = True
+                ).generate(words_wakati)
+
+        
+        plt.figure(figsize=(15,12))
+        plt.imshow(wordcloud)
+        plt.axis("off")
+        plt.savefig("word_cloud.png")
+        plt.show()
+
+        st.set_option('deprecation.showPyplotGlobalUse', False)
+        st.pyplot()
 
 
